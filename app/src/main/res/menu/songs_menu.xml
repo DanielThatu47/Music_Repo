@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_sort"
+        android:icon="@drawable/ic_sort"
+        android:title="Sort"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item android:id="@+id/sort_by_title" android:title="By Title" />
+            <item android:id="@+id/sort_by_artist" android:title="By Artist" />
+            <item android:id="@+id/sort_by_album" android:title="By Album" />
+            <item android:id="@+id/sort_by_date" android:title="Recently Added" />
+            <item android:id="@+id/sort_by_duration" android:title="By Duration" />
+        </menu>
+    </item>
+</menu>

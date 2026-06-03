@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/songsFragment">
+
+    <fragment
+        android:id="@+id/songsFragment"
+        android:name="com.danielthatu.musicplayer.fragments.SongsFragment"
+        android:label="Songs" />
+
+    <fragment
+        android:id="@+id/favoritesFragment"
+        android:name="com.danielthatu.musicplayer.fragments.FavoritesFragment"
+        android:label="Favorites" />
+
+    <fragment
+        android:id="@+id/playlistsFragment"
+        android:name="com.danielthatu.musicplayer.fragments.PlaylistsFragment"
+        android:label="Playlists">
+        <action
+            android:id="@+id/action_playlists_to_playlistDetail"
+            app:destination="@id/playlistDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/playlistDetailFragment"
+        android:name="com.danielthatu.musicplayer.fragments.PlaylistDetailFragment"
+        android:label="Playlist">
+        <argument
+            android:name="playlistId"
+            app:argType="long" />
+        <argument
+            android:name="playlistName"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.danielthatu.musicplayer.fragments.SearchFragment"
+        android:label="Search" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.danielthatu.musicplayer.fragments.SettingsFragment"
+        android:label="Settings" />
+
+</navigation>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.MusicPlayer" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">#D0BCFF</item>
+        <item name="colorPrimaryVariant">#B69DF8</item>
+        <item name="colorOnPrimary">#381E72</item>
+        <item name="colorSecondary">#CCC2DC</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>
