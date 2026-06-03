@@ -11,17 +11,13 @@
         <item name="android:windowLightStatusBar" tools:targetApi="23">true</item>
     </style>
 
-    <style name="Theme.MusicPlayer.Splash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/colorPrimary</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_music_note</item>
-        <item name="postSplashScreenTheme">@style/Theme.MusicPlayer</item>
+    <!-- Splash screen: simple fullscreen on brand color, no splashscreen lib needed -->
+    <style name="Theme.MusicPlayer.Splash" parent="Theme.MusicPlayer">
+        <item name="android:windowBackground">@color/colorPrimary</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 
     <style name="Theme.MusicPlayer.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="Widget.MusicPlayer.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
-        <item name="itemIconTint">@color/bottom_nav_selector</item>
-        <item name="itemTextColor">@color/bottom_nav_selector</item>
-    </style>
 
 </resources>
