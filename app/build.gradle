@@ -30,7 +30,7 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.debug // for CI builds; replace with release keystore in prod
+            signingConfig signingConfigs.debug
         }
         debug {
             applicationIdSuffix ".debug"
@@ -51,6 +51,10 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    kapt {
+        correctErrorTypes true
+    }
 }
 
 dependencies {
@@ -70,13 +74,13 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-service:2.7.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.7.0'
 
-    // Media3 ExoPlayer (modern media playback)
+    // Media3 ExoPlayer
     implementation 'androidx.media3:media3-exoplayer:1.3.1'
     implementation 'androidx.media3:media3-ui:1.3.1'
     implementation 'androidx.media3:media3-session:1.3.1'
     implementation 'androidx.media3:media3-common:1.3.1'
 
-    // Room Database (for playlists & favorites)
+    // Room Database
     implementation 'androidx.room:room-runtime:2.6.1'
     implementation 'androidx.room:room-ktx:2.6.1'
     kapt 'androidx.room:room-compiler:2.6.1'
@@ -84,11 +88,11 @@ dependencies {
     // RecyclerView
     implementation 'androidx.recyclerview:recyclerview:1.3.2'
 
-    // Glide (album art loading)
-    implementation 'com.github.bumptech.glide:glide:4.16.0'
-    kapt 'com.github.bumptech.glide:glide-compiler:4.16.0'
+    // Glide — use 4.15.1 (stable, available on mavenCentral) + ksp compiler via kapt
+    implementation 'com.github.bumptech.glide:glide:4.15.1'
+    kapt 'com.github.bumptech.glide:compiler:4.15.1'
 
-    // Palette (for dynamic color from album art)
+    // Palette
     implementation 'androidx.palette:palette-ktx:1.0.0'
 
     // SwipeRefreshLayout
@@ -103,7 +107,7 @@ dependencies {
     // Preference
     implementation 'androidx.preference:preference-ktx:1.2.1'
 
-    // Media (for legacy MediaStore support)
+    // Media (legacy MediaStore / MediaBrowserService compat)
     implementation 'androidx.media:media:1.7.0'
 
     // CircleImageView
