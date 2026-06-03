@@ -65,7 +65,7 @@ class SongsAdapter(
                 .centerCrop()
                 .into(albumArt)
 
-            itemView.setOnClickListener { onSongClick(song, adapterPosition) }
+            itemView.setOnClickListener { onSongClick(song, bindingAdapterPosition) }
             moreBtn.setOnClickListener { onMoreClick(song, it) }
         }
     }
