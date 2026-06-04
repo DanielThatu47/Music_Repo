@@ -1,23 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.MusicPlayer" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
-        <item name="colorOnPrimary">@color/colorOnPrimary</item>
-        <item name="colorSecondary">@color/colorSecondary</item>
+    <style name="Theme.MusicPlayer" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/spotify_green</item>
+        <item name="colorPrimaryVariant">@color/spotify_green_dark</item>
+        <item name="colorOnPrimary">@color/spotify_black</item>
+        <item name="colorSecondary">@color/spotify_green</item>
+        <item name="colorOnSecondary">@color/spotify_black</item>
+        <item name="colorSurface">@color/spotify_dark_bg</item>
+        <item name="colorOnSurface">@color/spotify_white</item>
+        <item name="android:colorBackground">@color/spotify_dark_bg</item>
+        <item name="android:windowBackground">@color/spotify_dark_bg</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="23">true</item>
+        <item name="android:navigationBarColor">@color/spotify_black</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="23">false</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.MusicPlayer.MaterialAlertDialog</item>
     </style>
 
-    <!-- Splash screen: simple fullscreen on brand color, no splashscreen lib needed -->
     <style name="Theme.MusicPlayer.Splash" parent="Theme.MusicPlayer">
-        <item name="android:windowBackground">@color/colorPrimary</item>
+        <item name="android:windowBackground">@color/spotify_black</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="Theme.MusicPlayer.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="ThemeOverlay.MusicPlayer.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog.Dark">
+        <item name="colorSurface">@color/spotify_elevated</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorPrimary">@color/spotify_green</item>
+    </style>
+
+    <style name="Widget.MusicPlayer.Button.Spotify" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/spotify_green</item>
+        <item name="android:textColor">@color/spotify_black</item>
+        <item name="cornerRadius">50dp</item>
+    </style>
 
 </resources>

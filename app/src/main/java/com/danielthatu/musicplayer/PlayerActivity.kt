@@ -3,6 +3,8 @@ package com.danielthatu.musicplayer
 import android.content.ComponentName
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.SeekBar
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -23,11 +25,6 @@ import com.danielthatu.musicplayer.utils.toFormattedTime
 import com.danielthatu.musicplayer.viewmodels.MusicViewModel
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class PlayerActivity : AppCompatActivity() {
 
@@ -35,51 +32,49 @@ class PlayerActivity : AppCompatActivity() {
     private val viewModel: MusicViewModel by viewModels()
 
     private lateinit var controllerFuture: ListenableFuture<MediaController>
-    private val controller get() = if (controllerFuture.isDone) controllerFuture.get() else null
+    private val controller get() = if (::controllerFuture.isInitialized && controllerFuture.isDone) controllerFuture.get() else null
 
-    private var seekJob: Job? = null
+    private val handler = Handler(Looper.getMainLooper())
+    private var seekRunnable: Runnable? = null
     private var currentSong: Song? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         setupToolbar()
         setupControls()
         observeViewModel()
     }
 
     private fun setupToolbar() {
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding.btnBack.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
     }
 
     private fun observeViewModel() {
         viewModel.currentSong.observe(this) { song ->
             song?.let { updateUI(it) }
         }
-
-        viewModel.isPlaying.observe(this) { isPlaying ->
+        viewModel.isPlaying.observe(this) { playing ->
             binding.btnPlayPause.setImageResource(
-                if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play
+                if (playing) R.drawable.ic_pause_circle else R.drawable.ic_play_circle
             )
-            if (isPlaying) startSeekBarUpdate() else stopSeekBarUpdate()
+            if (playing) startSeek() else stopSeek()
         }
-
-        viewModel.isFavoriteLive(currentSong?.id ?: -1L).observe(this) { isFav ->
+        viewModel.isFavoriteLive(currentSong?.id ?: -1L).observe(this) { fav ->
             binding.btnFavorite.setImageResource(
-                if (isFav) R.drawable.ic_favorite_filled else R.drawable.ic_favorite_outline
+                if (fav) R.drawable.ic_favorite_filled else R.drawable.ic_favorite_outline
+            )
+            binding.btnFavorite.setColorFilter(
+                ContextCompat.getColor(this, if (fav) R.color.favorite_red else R.color.icon_default)
             )
         }
     }
 
     private fun setupControls() {
         binding.btnPlayPause.setOnClickListener {
-            controller?.let { c -> if (c.isPlaying) c.pause() else c.play() }
+            controller?.let { if (it.isPlaying) it.pause() else it.play() }
         }
-
         binding.btnNext.setOnClickListener { controller?.seekToNextMediaItem() }
         binding.btnPrevious.setOnClickListener { controller?.seekToPreviousMediaItem() }
 
@@ -89,7 +84,6 @@ class PlayerActivity : AppCompatActivity() {
                 updateShuffleIcon(c.shuffleModeEnabled)
             }
         }
-
         binding.btnRepeat.setOnClickListener {
             controller?.let { c ->
                 c.repeatMode = when (c.repeatMode) {
@@ -100,25 +94,17 @@ class PlayerActivity : AppCompatActivity() {
                 updateRepeatIcon(c.repeatMode)
             }
         }
-
         binding.btnFavorite.setOnClickListener {
-            currentSong?.let { song ->
-                viewModel.toggleFavorite(song.id)
-            }
+            currentSong?.let { viewModel.toggleFavorite(it.id) }
         }
-
         binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) {
-                    binding.tvCurrentTime.text = progress.toLong().toFormattedTime()
-                }
+            override fun onProgressChanged(sb: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) binding.tvCurrentTime.text = progress.toLong().toFormattedTime()
             }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) = stopSeekBarUpdate()
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                seekBar?.let { controller?.seekTo(it.progress.toLong()) }
-                startSeekBarUpdate()
+            override fun onStartTrackingTouch(sb: SeekBar?) = stopSeek()
+            override fun onStopTrackingTouch(sb: SeekBar?) {
+                sb?.let { controller?.seekTo(it.progress.toLong()) }
+                startSeek()
             }
         })
     }
@@ -136,39 +122,37 @@ class PlayerActivity : AppCompatActivity() {
             .placeholder(R.drawable.ic_music_note)
             .error(R.drawable.ic_music_note)
             .addListener(object : RequestListener<Drawable> {
-                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>, isFirstResource: Boolean): Boolean = false
-                override fun onResourceReady(resource: Drawable, model: Any, target: Target<Drawable>, dataSource: DataSource, isFirstResource: Boolean): Boolean = false
+                override fun onLoadFailed(e: GlideException?, m: Any?, t: Target<Drawable>, f: Boolean) = false
+                override fun onResourceReady(r: Drawable, m: Any, t: Target<Drawable>, d: DataSource, f: Boolean) = false
             })
             .into(binding.ivAlbumArt)
     }
 
-    private fun startSeekBarUpdate() {
-        seekJob?.cancel()
-        seekJob = CoroutineScope(Dispatchers.Main).launch {
-            while (true) {
+    private fun startSeek() {
+        seekRunnable?.let { handler.removeCallbacks(it) }
+        seekRunnable = object : Runnable {
+            override fun run() {
                 controller?.let { c ->
                     if (c.isPlaying) {
-                        val position = c.currentPosition
-                        binding.seekBar.progress = position.toInt()
-                        binding.tvCurrentTime.text = position.toFormattedTime()
+                        val pos = c.currentPosition
+                        binding.seekBar.progress = pos.toInt()
+                        binding.tvCurrentTime.text = pos.toFormattedTime()
                     }
                 }
-                delay(500)
+                handler.postDelayed(this, 500)
             }
         }
+        handler.post(seekRunnable!!)
     }
 
-    private fun stopSeekBarUpdate() {
-        seekJob?.cancel()
-        seekJob = null
+    private fun stopSeek() {
+        seekRunnable?.let { handler.removeCallbacks(it) }
     }
 
     private fun updateShuffleIcon(enabled: Boolean) {
-        binding.btnShuffle.alpha = if (enabled) 1.0f else 0.5f
-        binding.btnShuffle.setColorFilter(
-            if (enabled) ContextCompat.getColor(this, R.color.colorPrimary)
-            else ContextCompat.getColor(this, R.color.icon_default)
-        )
+        val color = if (enabled) R.color.spotify_green else R.color.icon_default
+        binding.btnShuffle.setColorFilter(ContextCompat.getColor(this, color))
+        binding.btnShuffle.alpha = if (enabled) 1f else 0.5f
     }
 
     private fun updateRepeatIcon(mode: Int) {
@@ -176,48 +160,47 @@ class PlayerActivity : AppCompatActivity() {
             Player.REPEAT_MODE_OFF -> {
                 binding.btnRepeat.setImageResource(R.drawable.ic_repeat)
                 binding.btnRepeat.alpha = 0.5f
+                binding.btnRepeat.clearColorFilter()
             }
             Player.REPEAT_MODE_ALL -> {
                 binding.btnRepeat.setImageResource(R.drawable.ic_repeat)
-                binding.btnRepeat.alpha = 1.0f
-                binding.btnRepeat.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimary))
+                binding.btnRepeat.alpha = 1f
+                binding.btnRepeat.setColorFilter(ContextCompat.getColor(this, R.color.spotify_green))
             }
             Player.REPEAT_MODE_ONE -> {
                 binding.btnRepeat.setImageResource(R.drawable.ic_repeat_one)
-                binding.btnRepeat.alpha = 1.0f
-                binding.btnRepeat.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimary))
+                binding.btnRepeat.alpha = 1f
+                binding.btnRepeat.setColorFilter(ContextCompat.getColor(this, R.color.spotify_green))
             }
         }
     }
 
     override fun onStart() {
         super.onStart()
-        val sessionToken = SessionToken(this, ComponentName(this, MusicService::class.java))
-        controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
+        val token = SessionToken(this, ComponentName(this, MusicService::class.java))
+        controllerFuture = MediaController.Builder(this, token).buildAsync()
         controllerFuture.addListener({
             val c = controllerFuture.get()
             c.addListener(object : Player.Listener {
                 override fun onIsPlayingChanged(isPlaying: Boolean) {
                     viewModel.setPlayingState(isPlaying)
                 }
-                override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                    mediaItem?.let {
-                        val songId = it.mediaId.toLongOrNull() ?: return
-                        viewModel.allSongs.value?.find { s -> s.id == songId }?.let { song ->
+                override fun onMediaItemTransition(item: MediaItem?, reason: Int) {
+                    item?.mediaId?.toLongOrNull()?.let { id ->
+                        viewModel.allSongs.value?.find { it.id == id }?.let { song ->
                             viewModel.setCurrentSong(song)
                         }
                     }
                 }
             })
-            // Sync initial state
-            if (c.isPlaying) startSeekBarUpdate()
+            if (c.isPlaying) startSeek()
             updateShuffleIcon(c.shuffleModeEnabled)
             updateRepeatIcon(c.repeatMode)
         }, MoreExecutors.directExecutor())
     }
 
     override fun onStop() {
-        stopSeekBarUpdate()
+        stopSeek()
         MediaController.releaseFuture(controllerFuture)
         super.onStop()
     }

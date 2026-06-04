@@ -1,23 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/songsFragment"
-        android:icon="@drawable/ic_music_note"
-        android:title="@string/songs" />
-    <item
-        android:id="@+id/favoritesFragment"
-        android:icon="@drawable/ic_favorite_outline"
-        android:title="@string/favorites" />
-    <item
-        android:id="@+id/playlistsFragment"
-        android:icon="@drawable/ic_playlist"
-        android:title="@string/playlists" />
-    <item
-        android:id="@+id/searchFragment"
-        android:icon="@drawable/ic_search"
-        android:title="@string/search" />
-    <item
-        android:id="@+id/settingsFragment"
-        android:icon="@drawable/ic_settings"
-        android:title="@string/settings" />
+    <item android:id="@+id/songsFragment" android:icon="@drawable/ic_home" android:title="Home" />
+    <item android:id="@+id/searchFragment" android:icon="@drawable/ic_search" android:title="Search" />
+    <item android:id="@+id/favoritesFragment" android:icon="@drawable/ic_favorite_outline" android:title="Liked" />
+    <item android:id="@+id/playlistsFragment" android:icon="@drawable/ic_playlist" android:title="Library" />
+    <item android:id="@+id/settingsFragment" android:icon="@drawable/ic_settings" android:title="Settings" />
 </menu>

@@ -53,7 +53,7 @@ class SongsAdapter(
             nowPlayingIndicator.visibility = if (isHighlighted) View.VISIBLE else View.INVISIBLE
             title.setTextColor(
                 if (isHighlighted)
-                    itemView.context.getColor(R.color.colorPrimary)
+                    itemView.context.getColor(R.color.spotify_green)
                 else
                     itemView.context.getColor(R.color.text_primary)
             )

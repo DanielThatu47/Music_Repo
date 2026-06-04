@@ -1,12 +1,7 @@
 package com.danielthatu.musicplayer.fragments
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.PopupMenu
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -22,6 +17,7 @@ import com.danielthatu.musicplayer.utils.PreferenceManager
 import com.danielthatu.musicplayer.utils.showToast
 import com.danielthatu.musicplayer.utils.toFormattedSize
 import com.danielthatu.musicplayer.viewmodels.MusicViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class SongsFragment : Fragment() {
 
@@ -29,9 +25,9 @@ class SongsFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: MusicViewModel by activityViewModels()
     private lateinit var songsAdapter: SongsAdapter
-    private var currentHighlightPosition = -1
+    private var currentHighlight = -1
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, b: Bundle?): View {
         _binding = FragmentSongsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -41,9 +37,15 @@ class SongsFragment : Fragment() {
         setupRecyclerView()
         setupMenu()
         observeViewModel()
-
-        binding.swipeRefresh.setOnRefreshListener {
-            viewModel.loadAllSongs()
+        binding.swipeRefresh.setOnRefreshListener { viewModel.loadAllSongs() }
+        binding.btnGrantPermission.setOnClickListener {
+            (activity as? MainActivity)?.checkAndRequestPermissions()
+        }
+        binding.btnShuffleAll.setOnClickListener {
+            val songs = viewModel.allSongs.value ?: return@setOnClickListener
+            if (songs.isEmpty()) return@setOnClickListener
+            val shuffled = songs.shuffled()
+            (activity as? MainActivity)?.playSongs(shuffled, 0)
         }
     }
 
@@ -53,11 +55,9 @@ class SongsFragment : Fragment() {
                 val songs = viewModel.allSongs.value ?: return@SongsAdapter
                 (activity as? MainActivity)?.playSongs(songs, position)
                 songsAdapter.setHighlightedPosition(position)
-                currentHighlightPosition = position
+                currentHighlight = position
             },
-            onMoreClick = { song, view ->
-                showSongMenu(song, view)
-            }
+            onMoreClick = { song, anchor -> showSongMenu(song, anchor) }
         )
         binding.recyclerSongs.apply {
             adapter = songsAdapter
@@ -68,32 +68,16 @@ class SongsFragment : Fragment() {
 
     private fun setupMenu() {
         requireActivity().addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.songs_menu, menu)
+            override fun onCreateMenu(menu: Menu, inf: MenuInflater) {
+                inf.inflate(R.menu.songs_menu, menu)
             }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when (menuItem.itemId) {
-                    R.id.sort_by_title -> {
-                        viewModel.setSortOrder(PreferenceManager.SORT_BY_TITLE)
-                        true
-                    }
-                    R.id.sort_by_artist -> {
-                        viewModel.setSortOrder(PreferenceManager.SORT_BY_ARTIST)
-                        true
-                    }
-                    R.id.sort_by_album -> {
-                        viewModel.setSortOrder(PreferenceManager.SORT_BY_ALBUM)
-                        true
-                    }
-                    R.id.sort_by_date -> {
-                        viewModel.setSortOrder(PreferenceManager.SORT_BY_DATE)
-                        true
-                    }
-                    R.id.sort_by_duration -> {
-                        viewModel.setSortOrder(PreferenceManager.SORT_BY_DURATION)
-                        true
-                    }
+            override fun onMenuItemSelected(item: MenuItem): Boolean {
+                return when (item.itemId) {
+                    R.id.sort_by_title -> { viewModel.setSortOrder(PreferenceManager.SORT_BY_TITLE); true }
+                    R.id.sort_by_artist -> { viewModel.setSortOrder(PreferenceManager.SORT_BY_ARTIST); true }
+                    R.id.sort_by_album -> { viewModel.setSortOrder(PreferenceManager.SORT_BY_ALBUM); true }
+                    R.id.sort_by_date -> { viewModel.setSortOrder(PreferenceManager.SORT_BY_DATE); true }
+                    R.id.sort_by_duration -> { viewModel.setSortOrder(PreferenceManager.SORT_BY_DURATION); true }
                     else -> false
                 }
             }
@@ -104,20 +88,32 @@ class SongsFragment : Fragment() {
         viewModel.allSongs.observe(viewLifecycleOwner) { songs ->
             songsAdapter.submitList(songs)
             binding.swipeRefresh.isRefreshing = false
-            binding.tvEmptyState.visibility = if (songs.isEmpty()) View.VISIBLE else View.GONE
-            binding.recyclerSongs.visibility = if (songs.isEmpty()) View.GONE else View.VISIBLE
+            val isEmpty = songs.isEmpty()
+            binding.emptyState.visibility = if (isEmpty) View.VISIBLE else View.GONE
+            binding.recyclerSongs.visibility = if (isEmpty) View.GONE else View.VISIBLE
+            if (!isEmpty) {
+                binding.tvSongCount.text = "${songs.size} songs"
+                binding.btnShuffleAll.visibility = View.VISIBLE
+                binding.permissionState.visibility = View.GONE
+            }
         }
-
         viewModel.isLoading.observe(viewLifecycleOwner) { loading ->
             if (loading) binding.swipeRefresh.isRefreshing = true
         }
-
+        viewModel.permissionDenied.observe(viewLifecycleOwner) { denied ->
+            if (denied) {
+                binding.permissionState.visibility = View.VISIBLE
+                binding.emptyState.visibility = View.GONE
+                binding.recyclerSongs.visibility = View.GONE
+                binding.btnShuffleAll.visibility = View.GONE
+            }
+        }
         viewModel.currentSong.observe(viewLifecycleOwner) { song ->
             song?.let {
-                val position = viewModel.allSongs.value?.indexOfFirst { s -> s.id == it.id } ?: -1
-                if (position != currentHighlightPosition) {
-                    songsAdapter.setHighlightedPosition(position)
-                    currentHighlightPosition = position
+                val pos = viewModel.allSongs.value?.indexOfFirst { s -> s.id == it.id } ?: -1
+                if (pos != currentHighlight) {
+                    songsAdapter.setHighlightedPosition(pos)
+                    currentHighlight = pos
                 }
             }
         }
@@ -130,30 +126,34 @@ class SongsFragment : Fragment() {
                 when (item.itemId) {
                     R.id.action_play -> {
                         val songs = viewModel.allSongs.value ?: return@setOnMenuItemClickListener true
-                        val position = songs.indexOfFirst { it.id == song.id }
-                        (activity as? MainActivity)?.playSongs(songs, position)
+                        val pos = songs.indexOfFirst { it.id == song.id }
+                        (activity as? MainActivity)?.playSongs(songs, pos)
                         true
                     }
                     R.id.action_add_to_playlist -> {
-                        // Navigate to playlist picker
-                        requireContext().showToast("Add to playlist - coming soon")
+                        showAddToPlaylistDialog(song)
                         true
                     }
                     R.id.action_favorite -> {
                         viewModel.toggleFavorite(song.id)
+                        requireContext().showToast("Added to Liked Songs")
                         true
                     }
                     R.id.action_share -> {
-                        // Share intent
-                        val shareIntent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                        val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
                             type = "audio/*"
                             putExtra(android.content.Intent.EXTRA_STREAM, song.uri)
+                            addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
                         }
-                        startActivity(android.content.Intent.createChooser(shareIntent, "Share ${song.title}"))
+                        startActivity(android.content.Intent.createChooser(intent, "Share ${song.title}"))
                         true
                     }
                     R.id.action_song_info -> {
-                        showSongInfo(song)
+                        MaterialAlertDialogBuilder(requireContext())
+                            .setTitle(song.title)
+                            .setMessage("Artist: ${song.artist}\nAlbum: ${song.album}\nDuration: ${song.formattedDuration}\nSize: ${song.size.toFormattedSize()}\nPath: ${song.path}")
+                            .setPositiveButton("OK", null)
+                            .show()
                         true
                     }
                     else -> false
@@ -163,22 +163,21 @@ class SongsFragment : Fragment() {
         }
     }
 
-    private fun showSongInfo(song: Song) {
-        com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
-            .setTitle(song.title)
-            .setMessage(
-                "Artist: ${song.artist}\n" +
-                "Album: ${song.album}\n" +
-                "Duration: ${song.formattedDuration}\n" +
-                "Size: ${song.size.toFormattedSize()}\n" +
-                "Path: ${song.path}"
-            )
-            .setPositiveButton("OK", null)
+    private fun showAddToPlaylistDialog(song: Song) {
+        val playlists = viewModel.playlists.value ?: emptyList()
+        if (playlists.isEmpty()) {
+            requireContext().showToast("No playlists yet — create one in Library")
+            return
+        }
+        val names = playlists.map { it.name }.toTypedArray()
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Add to Playlist")
+            .setItems(names) { _, which ->
+                viewModel.addSongToPlaylist(playlists[which].id, song.id)
+                requireContext().showToast("Added to ${playlists[which].name}")
+            }
             .show()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
+    override fun onDestroyView() { super.onDestroyView(); _binding = null }
 }

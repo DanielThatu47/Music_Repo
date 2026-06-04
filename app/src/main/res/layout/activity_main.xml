@@ -3,14 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/spotify_dark_bg">
 
-    <!-- Main content -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- Fragment container -->
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/nav_host_fragment"
             android:name="androidx.navigation.fragment.NavHostFragment"
@@ -23,91 +22,84 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Mini Player -->
-        <androidx.cardview.widget.CardView
+        <!-- Liquid Glass Mini Player -->
+        <LinearLayout
             android:id="@+id/mini_player_layout"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="0dp"
-            app:cardElevation="8dp"
+            android:layout_height="72dp"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_mini_player"
+            android:gravity="center_vertical"
+            android:paddingStart="12dp"
+            android:paddingEnd="4dp"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginBottom="4dp"
             app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/iv_mini_album_art"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_music_note" />
+
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="68dp"
-                android:orientation="horizontal"
-                android:background="@color/mini_player_bg"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
                 android:paddingStart="12dp"
-                android:paddingEnd="4dp"
-                android:gravity="center_vertical">
+                android:paddingEnd="8dp">
 
-                <ImageView
-                    android:id="@+id/iv_mini_album_art"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_music_note" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/tv_mini_title"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="8dp">
+                    android:textColor="@color/text_primary"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:text="Not Playing" />
 
-                    <TextView
-                        android:id="@+id/tv_mini_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/text_primary"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:maxLines="1"
-                        android:ellipsize="marquee"
-                        android:text="Not Playing" />
-
-                    <TextView
-                        android:id="@+id/tv_mini_artist"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp"
-                        android:maxLines="1"
-                        android:ellipsize="end"
-                        android:text="—" />
-
-                </LinearLayout>
-
-                <ImageButton
-                    android:id="@+id/btn_mini_play_pause"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
-                    android:src="@drawable/ic_play"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/play"
-                    android:tint="@color/colorPrimary" />
-
-                <ImageButton
-                    android:id="@+id/btn_mini_next"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
-                    android:src="@drawable/ic_skip_next"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/next"
-                    android:tint="@color/icon_default" />
+                <TextView
+                    android:id="@+id/tv_mini_artist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:text="—" />
 
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
 
-        <!-- Bottom Navigation -->
+            <ImageButton
+                android:id="@+id/btn_mini_play_pause"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:src="@drawable/ic_play"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:tint="@color/spotify_white" />
+
+            <ImageButton
+                android:id="@+id/btn_mini_next"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:src="@drawable/ic_skip_next"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:tint="@color/text_secondary" />
+
+        </LinearLayout>
+
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="?android:attr/windowBackground"
+            android:background="@color/spotify_black"
+            app:itemIconTint="@color/bottom_nav_selector"
+            app:itemTextColor="@color/bottom_nav_selector"
             app:menu="@menu/bottom_nav_menu"
             app:labelVisibilityMode="labeled"
             app:layout_constraintBottom_toBottomOf="parent"

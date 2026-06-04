@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/spotify_dark_bg">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -10,171 +10,89 @@
         android:orientation="vertical"
         android:paddingBottom="24dp">
 
-        <!-- Appearance header -->
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingHorizontal="16dp"
-            android:paddingTop="20dp"
+            android:paddingTop="16dp"
             android:paddingBottom="8dp"
-            android:text="Appearance"
-            android:textSize="12sp"
-            android:textColor="@color/colorPrimary"
-            android:textAllCaps="true"
-            android:letterSpacing="0.1" />
+            android:text="Settings"
+            android:textColor="@color/text_primary"
+            android:textSize="22sp"
+            android:textStyle="bold" />
 
-        <!-- Theme row -->
-        <LinearLayout
-            android:id="@+id/row_theme"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:background="?attr/selectableItemBackground"
-            android:paddingHorizontal="16dp">
+        <!-- Appearance -->
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp" android:paddingTop="20dp" android:paddingBottom="8dp"
+            android:text="APPEARANCE" android:textSize="11sp" android:textColor="@color/text_secondary"
+            android:letterSpacing="0.12" />
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_palette"
-                android:tint="@color/icon_default" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_marginStart="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/theme"
-                    android:textSize="15sp"
-                    android:textColor="@color/text_primary" />
-
-                <TextView
-                    android:id="@+id/tv_current_theme"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="13sp"
-                    android:textColor="@color/text_secondary"
-                    android:text="System default" />
+        <LinearLayout android:id="@+id/row_theme" android:layout_width="match_parent"
+            android:layout_height="64dp" android:orientation="horizontal" android:gravity="center_vertical"
+            android:background="?attr/selectableItemBackground" android:paddingHorizontal="16dp">
+            <ImageView android:layout_width="24dp" android:layout_height="24dp"
+                android:src="@drawable/ic_palette" android:tint="@color/icon_default" />
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Theme" android:textSize="15sp" android:textColor="@color/text_primary" />
+                <TextView android:id="@+id/tv_current_theme" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:textSize="13sp"
+                    android:textColor="@color/text_secondary" android:text="Dark" />
             </LinearLayout>
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_chevron_right"
-                android:tint="@color/icon_default" />
+            <ImageView android:layout_width="20dp" android:layout_height="20dp"
+                android:src="@drawable/ic_chevron_right" android:tint="@color/icon_default" />
         </LinearLayout>
 
-        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider" android:layout_marginHorizontal="16dp" />
+        <View android:layout_width="match_parent" android:layout_height="0.5dp"
+            android:background="@color/divider" android:layout_marginHorizontal="16dp" />
 
-        <!-- Playback header -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="16dp"
-            android:paddingTop="20dp"
-            android:paddingBottom="8dp"
-            android:text="Playback"
-            android:textSize="12sp"
-            android:textColor="@color/colorPrimary"
-            android:textAllCaps="true"
-            android:letterSpacing="0.1" />
+        <!-- Playback -->
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp" android:paddingTop="20dp" android:paddingBottom="8dp"
+            android:text="PLAYBACK" android:textSize="11sp" android:textColor="@color/text_secondary"
+            android:letterSpacing="0.12" />
 
-        <!-- Sleep Timer row -->
-        <LinearLayout
-            android:id="@+id/row_sleep_timer"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:background="?attr/selectableItemBackground"
-            android:paddingHorizontal="16dp">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_timer"
-                android:tint="@color/icon_default" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_marginStart="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/sleep_timer"
-                    android:textSize="15sp"
-                    android:textColor="@color/text_primary" />
-
-                <TextView
-                    android:id="@+id/tv_sleep_timer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="13sp"
-                    android:textColor="@color/text_secondary"
-                    android:text="Off" />
+        <LinearLayout android:id="@+id/row_sleep_timer" android:layout_width="match_parent"
+            android:layout_height="64dp" android:orientation="horizontal" android:gravity="center_vertical"
+            android:background="?attr/selectableItemBackground" android:paddingHorizontal="16dp">
+            <ImageView android:layout_width="24dp" android:layout_height="24dp"
+                android:src="@drawable/ic_timer" android:tint="@color/icon_default" />
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Sleep Timer" android:textSize="15sp" android:textColor="@color/text_primary" />
+                <TextView android:id="@+id/tv_sleep_timer" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:textSize="13sp"
+                    android:textColor="@color/text_secondary" android:text="Off" />
             </LinearLayout>
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_chevron_right"
-                android:tint="@color/icon_default" />
+            <ImageView android:layout_width="20dp" android:layout_height="20dp"
+                android:src="@drawable/ic_chevron_right" android:tint="@color/icon_default" />
         </LinearLayout>
 
-        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider" android:layout_marginHorizontal="16dp" />
+        <View android:layout_width="match_parent" android:layout_height="0.5dp"
+            android:background="@color/divider" android:layout_marginHorizontal="16dp" />
 
-        <!-- About header -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="16dp"
-            android:paddingTop="20dp"
-            android:paddingBottom="8dp"
-            android:text="Info"
-            android:textSize="12sp"
-            android:textColor="@color/colorPrimary"
-            android:textAllCaps="true"
-            android:letterSpacing="0.1" />
+        <!-- About -->
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp" android:paddingTop="20dp" android:paddingBottom="8dp"
+            android:text="ABOUT" android:textSize="11sp" android:textColor="@color/text_secondary"
+            android:letterSpacing="0.12" />
 
-        <!-- About row -->
-        <LinearLayout
-            android:id="@+id/row_about"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:background="?attr/selectableItemBackground"
-            android:paddingHorizontal="16dp">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_info"
-                android:tint="@color/icon_default" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="16dp"
-                android:text="@string/about"
-                android:textSize="15sp"
-                android:textColor="@color/text_primary" />
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_chevron_right"
-                android:tint="@color/icon_default" />
+        <LinearLayout android:id="@+id/row_about" android:layout_width="match_parent"
+            android:layout_height="64dp" android:orientation="horizontal" android:gravity="center_vertical"
+            android:background="?attr/selectableItemBackground" android:paddingHorizontal="16dp">
+            <ImageView android:layout_width="24dp" android:layout_height="24dp"
+                android:src="@drawable/ic_info" android:tint="@color/icon_default" />
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="About BeatFlow" android:textSize="15sp" android:textColor="@color/text_primary" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:textSize="13sp" android:textColor="@color/text_secondary" android:text="Version 1.0" />
+            </LinearLayout>
+            <ImageView android:layout_width="20dp" android:layout_height="20dp"
+                android:src="@drawable/ic_chevron_right" android:tint="@color/icon_default" />
         </LinearLayout>
 
     </LinearLayout>

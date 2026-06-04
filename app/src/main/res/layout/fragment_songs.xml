@@ -4,30 +4,142 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/swipe_refresh"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/spotify_dark_bg">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- Main list with header -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_songs"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:paddingBottom="8dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+            android:paddingBottom="8dp" />
 
-        <TextView
-            android:id="@+id/tv_empty_state"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/no_songs_found"
-            android:textSize="16sp"
-            android:textColor="@color/text_secondary"
+        <!-- Header bar: song count + shuffle all -->
+        <LinearLayout
+            android:id="@+id/header_bar"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp"
+            android:background="@color/spotify_dark_bg">
+
+            <TextView
+                android:id="@+id/tv_song_count"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp"
+                android:text="0 songs" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_shuffle_all"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Shuffle"
+                android:textColor="@color/spotify_black"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:backgroundTint="@color/spotify_green"
+                app:cornerRadius="18dp"
+                app:icon="@drawable/ic_shuffle"
+                app:iconTint="@color/spotify_black"
+                app:iconSize="16dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <!-- Permission denied state -->
+        <LinearLayout
+            android:id="@+id/permission_state"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
             android:gravity="center"
-            android:visibility="gone" />
+            android:padding="40dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_music_note"
+                android:tint="@color/spotify_green"
+                android:alpha="0.6" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Allow access to music"
+                android:textColor="@color/text_primary"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:gravity="center" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="BeatFlow needs permission to access\nyour audio files"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp"
+                android:gravity="center" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_grant_permission"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginTop="32dp"
+                android:text="Allow Access"
+                android:textColor="@color/spotify_black"
+                android:textStyle="bold"
+                android:paddingHorizontal="32dp"
+                app:backgroundTint="@color/spotify_green"
+                app:cornerRadius="24dp" />
+
+        </LinearLayout>
+
+        <!-- Empty state (no songs found) -->
+        <LinearLayout
+            android:id="@+id/empty_state"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="40dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_music_note"
+                android:tint="@color/text_hint" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="No music found"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Add audio files to your device\nand pull down to refresh"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp"
+                android:gravity="center" />
+
+        </LinearLayout>
 
     </FrameLayout>
 
