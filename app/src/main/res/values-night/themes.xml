@@ -3,11 +3,15 @@
     <style name="Theme.MusicPlayer" parent="Theme.Material3.Dark.NoActionBar">
         <item name="colorPrimary">#1DB954</item>
         <item name="colorOnPrimary">#000000</item>
+        <item name="colorSurface">#121212</item>
+        <item name="colorOnSurface">#FFFFFF</item>
         <item name="android:colorBackground">#121212</item>
+        <item name="android:windowBackground">#121212</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">#000000</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
+
     <style name="Theme.MusicPlayer.Splash" parent="Theme.MusicPlayer">
         <item name="android:windowBackground">#000000</item>
         <item name="android:windowFullscreen">true</item>

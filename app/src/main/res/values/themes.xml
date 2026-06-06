@@ -16,19 +16,12 @@
         <item name="android:windowLightStatusBar" tools:targetApi="23">false</item>
         <item name="android:textColorPrimary">@color/text_primary</item>
         <item name="android:textColorSecondary">@color/text_secondary</item>
-        <item name="materialAlertDialogTheme">@style/ThemeOverlay.MusicPlayer.MaterialAlertDialog</item>
     </style>
 
     <style name="Theme.MusicPlayer.Splash" parent="Theme.MusicPlayer">
         <item name="android:windowBackground">@color/spotify_black</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowNoTitle">true</item>
-    </style>
-
-    <style name="ThemeOverlay.MusicPlayer.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog.Dark">
-        <item name="colorSurface">@color/spotify_elevated</item>
-        <item name="colorOnSurface">@color/text_primary</item>
-        <item name="colorPrimary">@color/spotify_green</item>
     </style>
 
     <style name="Widget.MusicPlayer.Button.Spotify" parent="Widget.Material3.Button">
